@@ -10,7 +10,8 @@ export default function RootLayout() {
         headerTintColor: "#FFFFFF"
       }}
     >
-      <Stack.Screen name="loginAndRegister/Login" options={{title: "Login"}}/>
+      <Stack.Screen name="Login" options={{title: "Login", headerTitleAlign: "center"}}/>
+      <Stack.Screen name="Register" options={{title: "Cadastrar", headerTitleAlign: "center"}}/>
     </Stack>
   );
 }
