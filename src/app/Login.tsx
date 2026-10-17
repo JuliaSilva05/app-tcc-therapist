@@ -1,10 +1,11 @@
 import { Link, router, Stack } from "expo-router";
 import { useState } from "react";
-import { View, Text, TextInput, Button, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, Pressable, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from '@react-native-vector-icons/material-icons';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
-import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axiosInstance from "@/services/apiConfig";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,14 +17,23 @@ const Login = () => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      
+
       if (!email.length || !password.length) {
         alert("Preencha os campos necessários!")
-      }
+      };
 
       const body = { email, password };
 
-      const response = await axios.post("http://localhost:8000/api/login", body);
+      const { data } = await axiosInstance.post("/api/login", body);
+
+      if (data.error) {
+        console.log("NNNNNNNNNNNNNNNN")
+      } else {
+        await AsyncStorage.setItem("auth-rn", JSON.stringify(data));
+        // router.navigate("/Home");
+        router.replace("/(app)/Home");
+        Alert.alert("Conta cadastrada com sucesso");
+      }
 
     } catch (e) {
       console.error(e);
@@ -33,69 +43,76 @@ const Login = () => {
   }
 
   return (
-    <KeyboardAwareScrollView className="flex-1 items-center justify-evenly p-6 gap-6 bg-white">
-      {/* <View className="flex-1 items-center justify-evenly p-6 gap-6 bg-white"> */}
-      <SafeAreaView>
+    <SafeAreaView className="flex-1 bg-white p-4">      
+      <KeyboardAwareScrollView
+        contentContainerClassName="flex-1 justify-evenly"
+      >
+          <View className="w-full gap-6">
 
-        <View className="flex w-full gap-6">
-
-          <View className="gap-1">
-            <Text className="text-base text-neutral-400 font-medium">E-MAIL</Text>
-            <TextInput
-              placeholder="Escreva seu e-mail..."
-              className="text-base bg-neutral-200 shadow-md border-b-2 
-                border-neutral-400 rounded-t-md p-1"
-              keyboardType="email-address"
-              onChangeText={(e) => setEmail(e)}
-              editable={!isLoading}
-            />
-          </View>
-          
-          <View className="gap-1">
-            <Text className="text-base text-neutral-400 font-medium">SENHA</Text>
-            <View className="relative justify-around">
+            <View className="gap-1">
+              <Text className="text-base text-neutral-400 font-medium">
+                E-MAIL
+                <Text className="text-red-500"> *</Text>
+              </Text>
               <TextInput
-                placeholder="Escreva sua senha..."
+                placeholder="Escreva seu e-mail..."
                 className="text-base bg-neutral-200 shadow-md border-b-2 
                   border-neutral-400 rounded-t-md p-1"
-                secureTextEntry={!showPassword}
-                onChangeText={(e) => setPassword(e)}
+                keyboardType="email-address"
+                onChangeText={(e) => setEmail(e)}
                 editable={!isLoading}
               />
-              <Pressable className="absolute right-1 p-1" onPress={() => setShowPassword(!showPassword)}>
-                <MaterialIcons 
-                  name={showPassword ? "visibility" : "visibility-off"} 
-                  color={"#b0afaf"} size={20} 
+            </View>
+            
+            <View className="gap-1">
+              <Text className="text-base text-neutral-400 font-medium">
+                SENHA
+                <Text className="text-red-500"> *</Text>
+              </Text>
+              <View className="relative justify-around">
+                <TextInput
+                  placeholder="Escreva sua senha..."
+                  className="text-base bg-neutral-200 shadow-md border-b-2 
+                    border-neutral-400 rounded-t-md p-1"
+                  secureTextEntry={!showPassword}
+                  onChangeText={(e) => setPassword(e)}
+                  editable={!isLoading}
                 />
-              </Pressable>
+                <Pressable className="absolute right-1 p-1" onPress={() => setShowPassword(!showPassword)}>
+                  <MaterialIcons 
+                    name={showPassword ? "visibility" : "visibility-off"} 
+                    color={"#b0afaf"} size={20} 
+                  />
+                </Pressable>
+              </View>
             </View>
           </View>
-        </View>
-        
-        <View className="gap-3 items-center">
-          <Pressable
-            className="border-[2px] border-sky-900 rounded-[32px] px-12 py-4 bg-sky-300" 
-            onPress={handleSubmit}
-            disabled={isLoading}
-          >
-            <Text className="text-xl text-sky-900 font-medium">ENTRAR</Text>
-          </Pressable>
+          
+          <View className="gap-3 items-center">
+            <Pressable
+              className="border-[2px] border-sky-900 rounded-[32px] px-12 py-4 bg-sky-300" 
+              onPress={handleSubmit}
+              disabled={isLoading}
+            >
+              <Text className="text-xl text-sky-900 font-medium">ENTRAR</Text>
+            </Pressable>
 
-          <Link href="/Register" disabled={isLoading}>
-            <Text className="text-lg text-sky-900 font-semibold underline">
-              Ainda não tem conta? Cadastrar
+            <Text className="text-lg text-sky-900">
+              Ainda não tem conta? {" "}
+              <Link href="/Register" disabled={isLoading}>
+                <Text className="font-semibold underline">
+                  Cadastrar
+                </Text>
+              </Link>
             </Text>
-          </Link>
 
-          <Link href="/" disabled={isLoading}>
-            <Text className="text-base text-sky-900 font-sm">Esqueci minha senha</Text>
-          </Link>
-        </View>
-
-      </SafeAreaView>
-      {/* </View> */}
-    </KeyboardAwareScrollView>
+            <Link href="/" disabled={isLoading}>
+              <Text className="text-base text-sky-900 font-sm underline">Esqueci minha senha</Text>
+            </Link>
+          </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
-}
+};
 
 export default Login;

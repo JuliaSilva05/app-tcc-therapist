@@ -1,43 +1,43 @@
 import MaterialIcons from "@react-native-vector-icons/material-icons";
-import { Link, Stack, useNavigation } from "expo-router";
-import { useState } from "react";
-import { View, Text, TextInput, Button, Pressable } from "react-native";
-import axios from "axios";
+import { Link, router, Stack, useNavigation, useRouter } from "expo-router";
+import { useContext, useState } from "react";
+import { View, Text, TextInput, Button, Pressable, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
+import axiosInstance from "@/services/apiConfig";
+// import { AuthContext } from "@/context/auth";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  
   const [isLoading, setIsLoading] = useState(false);
+  // const [state, setState] = useContext(AuthContext);
 
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+      
+      const { data } = await axiosInstance.post("/api/register", {
+        name,
+        email,
+        password,
+        role: "Therapist",
+      });
 
-      if (!name.length || !email.length || !password.length) {
-        console.log("AAAAAAAAAAAA")
-        return;
+      console.log(data)
+
+      if (data.error) {
+        Alert.alert(data.error);
+      } else {
+        // setState(data);
+        await AsyncStorage.setItem("auth-rn", data?.token);
+        router.back();
+        Alert.alert("Conta cadastrada com sucesso");
       };
-      
-      const body = { name, email, password, role: "Therapist" };
-
-      const { data } = await axios.post("http://localhost:8000/api/register", body);
-
-      console.log(data);
-
-      // if (data.error) {
-      //   console.log("NNNNNNNNNNNNNNNN")
-      // } else {
-      //   await AsyncStorage.setItem("auth-rn", JSON.stringify(data));
-      //   useNavigation("/Login");
-      // }
-      
-
-
     } catch (e) {
       console.error(e);
     } finally {
@@ -46,66 +46,76 @@ const Register = () => {
   }
 
   return (
-    <KeyboardAwareScrollView className="flex-1 items-center justify-evenly p-6 gap-6 bg-white">
+    <SafeAreaView className="flex-1 bg-white p-4">      
+      <KeyboardAwareScrollView
+        contentContainerClassName="flex-1 items-center justify-evenly"
+      >
+        <View className="flex w-full gap-6">
 
-    {/* <View className="flex-1 items-center justify-evenly p-6 gap-6 bg-white"> */}
-      <View className="flex w-full gap-6">
-
-        <View className="gap-1">
-          <Text className="text-base text-neutral-400 font-medium">NOME</Text>
-          <TextInput
-            placeholder="Escreva seu nome..."
-            className="text-base bg-neutral-200 shadow-md border-b-2 border-neutral-400 
-              rounded-t-md p-1"
-            autoCapitalize="words"
-            onChangeText={(e) => setName(e)}
-            editable={!isLoading}
-          />
-        </View>
-
-        <View className="gap-1">
-          <Text className="text-base text-neutral-400 font-medium">E-MAIL</Text>
-          <TextInput
-            placeholder="Escreva seu e-mail..."
-            className="text-base bg-neutral-200 shadow-md border-b-2 border-neutral-400 
-              rounded-t-md p-1"
-              keyboardType="email-address"
-            onChangeText={(e) => setEmail(e)}
-            editable={!isLoading}
-          />
-        </View>
-        
-        <View className="gap-1">
-          <Text className="text-base text-neutral-400 font-medium">SENHA</Text>
-          <View className="relative justify-around">
+          <View className="gap-1">
+            <Text className="text-base text-neutral-400 font-medium">
+              NOME
+              <Text className="text-red-500"> *</Text>
+            </Text>
             <TextInput
-              placeholder="Escreva sua senha..."
+              placeholder="Escreva seu nome..."
               className="text-base bg-neutral-200 shadow-md border-b-2 border-neutral-400 
                 rounded-t-md p-1"
-              secureTextEntry={!showPassword}
-              onChangeText={(e) => setPassword(e)}
+              autoCapitalize="words"
+              onChangeText={(e) => setName(e)}
               editable={!isLoading}
             />
-            <Pressable className="absolute right-2" onPress={() => setShowPassword(!showPassword)}>
-              <MaterialIcons 
-                name={showPassword ? "visibility" : "visibility-off"} 
-                color={"#b0afaf"} size={20} 
+          </View>
+
+          <View className="gap-1">
+            <Text className="text-base text-neutral-400 font-medium">
+              E-MAIL
+              <Text className="text-red-500"> *</Text>
+            </Text>
+            <TextInput
+              placeholder="Escreva seu e-mail..."
+              className="text-base bg-neutral-200 shadow-md border-b-2 border-neutral-400 
+                rounded-t-md p-1"
+                keyboardType="email-address"
+              onChangeText={(e) => setEmail(e)}
+              editable={!isLoading}
+            />
+          </View>
+          
+          <View className="gap-1">
+            <Text className="text-base text-neutral-400 font-medium">
+              SENHA
+              <Text className="text-red-500"> *</Text>
+            </Text>
+            <View className="relative justify-around">
+              <TextInput
+                placeholder="Escreva sua senha..."
+                className="text-base bg-neutral-200 shadow-md border-b-2 border-neutral-400 
+                  rounded-t-md p-1"
+                secureTextEntry={!showPassword}
+                onChangeText={(e) => setPassword(e)}
+                editable={!isLoading}
               />
-            </Pressable>
+              <Pressable className="absolute right-2" onPress={() => setShowPassword(!showPassword)}>
+                <MaterialIcons 
+                  name={showPassword ? "visibility" : "visibility-off"} 
+                  color={"#b0afaf"} size={20} 
+                />
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
-      
-      <Pressable
-        className="border-[2px] border-sky-900 rounded-[32px] px-12 py-4 bg-sky-300" 
-        onPress={handleSubmit}
-        disabled={isLoading}
-      >
-        <Text className="text-xl text-sky-900 font-medium">CADASTRAR</Text>
-      </Pressable>
+        
+        <Pressable
+          className="border-[2px] border-sky-900 rounded-[32px] px-12 py-4 bg-sky-300" 
+          onPress={handleSubmit}
+          disabled={isLoading}
+        >
+          <Text className="text-xl text-sky-900 font-medium">CADASTRAR</Text>
+        </Pressable>
 
-      {/* </View> */}
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }
 
