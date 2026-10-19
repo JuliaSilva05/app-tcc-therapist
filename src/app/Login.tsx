@@ -4,8 +4,8 @@ import { View, Text, TextInput, Button, Pressable, TouchableOpacity, Alert } fro
 import { MaterialIcons } from '@react-native-vector-icons/material-icons';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance from "@/services/apiConfig";
+import { useSession } from "@/context/ctx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,25 +14,22 @@ const Login = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const { signIn } = useSession();
+
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
 
-      if (!email.length || !password.length) {
-        alert("Preencha os campos necessários!")
-      };
-
-      const body = { email, password };
-
-      const { data } = await axiosInstance.post("/api/login", body);
+      const { data } = await axiosInstance.post("/api/login", {
+        email, password,
+      });
 
       if (data.error) {
-        console.log("NNNNNNNNNNNNNNNN")
+        Alert.alert(data.error);
       } else {
-        await AsyncStorage.setItem("auth-rn", JSON.stringify(data));
-        // router.navigate("/Home");
-        router.replace("/(app)/Home");
-        Alert.alert("Conta cadastrada com sucesso");
+        signIn(data);
+        Alert.alert("Login realizado com sucesso");
+        router.replace("/(app)");
       }
 
     } catch (e) {

@@ -3,10 +3,9 @@ import { Link, router, Stack, useNavigation, useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import { View, Text, TextInput, Button, Pressable, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axiosInstance from "@/services/apiConfig";
-// import { AuthContext } from "@/context/auth";
+import { useSession } from "@/context/ctx";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -15,7 +14,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   
   const [isLoading, setIsLoading] = useState(false);
-  // const [state, setState] = useContext(AuthContext);
+  const { signIn } = useSession();
 
   const handleSubmit = async () => {
     try {
@@ -25,18 +24,17 @@ const Register = () => {
         name,
         email,
         password,
-        role: "Therapist",
+        role: "therapist",
       });
 
-      console.log(data)
+      console.log('data', data)
 
       if (data.error) {
         Alert.alert(data.error);
       } else {
-        // setState(data);
-        await AsyncStorage.setItem("auth-rn", data?.token);
-        router.back();
+        signIn(data);
         Alert.alert("Conta cadastrada com sucesso");
+        router.replace("/(app)");
       };
     } catch (e) {
       console.error(e);

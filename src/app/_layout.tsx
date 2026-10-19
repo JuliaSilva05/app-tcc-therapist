@@ -1,21 +1,36 @@
+import { SessionProvider, useSession } from "@/context/ctx";
+import { SplashScreenController } from "@/context/splash";
 import { Stack } from "expo-router";
-import { AuthProvider } from "./../context/auth";
+
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <Stack 
-        screenOptions={{ 
-          headerStyle: {
-            backgroundColor: "#219EBC"
-          },
-          headerTintColor: "#FFFFFF"
-        }}
-      >
-        <Stack.Screen name="Index" options={{title: "Login", headerTitleAlign: "center"}}/>
-        <Stack.Screen name="Register" options={{title: "Cadastrar", headerTitleAlign: "center"}}/>
-        {/* <Stack.Screen name="Home" options={{title: "Menu", headerTitleAlign: "center"}}/> */}
-      </Stack>
-    </AuthProvider>
+    <SessionProvider>
+      <SplashScreenController/>
+      <RootNavigator />
+    </SessionProvider>
   );
+}
+
+function RootNavigator() {
+  const { session } = useSession();
+  return (
+    <Stack 
+      screenOptions={{ 
+        headerStyle: {
+          backgroundColor: "#219EBC"
+        },
+        headerTintColor: "#FFFFFF"
+      }}
+    >
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="Login" options={{title: "Login", headerTitleAlign: "center"}}/>
+        <Stack.Screen name="Register" options={{title: "Cadastrar", headerTitleAlign: "center"}}/>
+      </Stack.Protected>
+
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(app)" options={{headerShown: false}}/>
+      </Stack.Protected>
+    </Stack>
+  )
 }
