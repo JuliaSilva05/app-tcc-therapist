@@ -10,8 +10,15 @@ const homeHeaderIcon = {
   ),
 }
 
+const notificationHeaderIcon = {
+  headerRight: () => (
+    <Pressable onPress={() => {}}>
+      <MaterialIcons name='notifications-active' color={"#FFFFFF"} size={25}/>
+    </Pressable>
+  ),
+}
+
 export default function AppLayout() {
-  // This renders the navigation stack for all authenticated app routes.
   return (
     <Stack
       screenOptions={{ 

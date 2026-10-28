@@ -11,7 +11,7 @@ const AuthContext = createContext<{
   signIn: (data: any) => void;
   signOut: () => void;
   session?: string | null;
-  user?: userContext | null;
+  user?: string | null;
   isLoading: boolean;
   isLoadingUser: boolean;
 } | null>(null);
@@ -34,10 +34,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
       value={{
         signIn: (data) => {
           // Perform sign-in logic here
-          // const parsedData = JSON.parse(data);
           if (data.user && data.token) {
             setSession(data.token);
-            setUser(data.user);
+            setUser(JSON.stringify(data.user));
           }
         },
         signOut: () => {

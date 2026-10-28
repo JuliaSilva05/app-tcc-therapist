@@ -13,21 +13,22 @@ const options = [
   },
   {
     id: "2",
-    title: "Atividades",
+    title: "Questões",
     icon: "add-task",
     link: "/",
   },
   {
     id: "3",
-    title: "Sequências",
+    title: "Atividades",
     icon: "format-list-numbered",
     link: "/",
   },
-  // {
-  //   id: "4",
-  //   title: "Configurações",
-  //   icon: "settings",
-  // },
+  {
+    id: "4",
+    title: "Configurações",
+    icon: "settings",
+    link: "/",
+  },
 ]
 
 function createRows(data: any[], columns: number) {
@@ -43,10 +44,10 @@ function createRows(data: any[], columns: number) {
 }
 
 const Home = () => {
-  const { signOut } = useSession();
-  
+  const { user, signOut } = useSession();
   return (
     <SafeAreaView>
+      <Text>{user}</Text>
       <Button title="logout-wip" onPress={() => signOut()} />
       <FlatList 
         data={createRows(options, 2)}
