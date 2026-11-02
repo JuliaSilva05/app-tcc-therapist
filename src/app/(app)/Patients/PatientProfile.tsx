@@ -98,7 +98,7 @@ export default function PatientProfile () {
             ) : (
               <View className="flex-row justify-between bg-neutral-200 p-3">
                 <Text>{patientInfo?.patientDisplayName}</Text>
-                <Pressable onPress={() => { setEditing(true), setNewDisplayName(patientInfo?.patientDisplayName)}}>
+                <Pressable onPress={() => { setEditing(true), setNewDisplayName(patientInfo?.patientDisplayName || "")}}>
                   <MaterialIcons name="edit" size={20}/>
                 </Pressable>
               </View>

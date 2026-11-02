@@ -10,14 +10,6 @@ const homeHeaderIcon = {
   ),
 }
 
-const notificationHeaderIcon = {
-  headerRight: () => (
-    <Pressable onPress={() => {}}>
-      <MaterialIcons name='notifications-active' color={"#FFFFFF"} size={25}/>
-    </Pressable>
-  ),
-}
-
 export default function AppLayout() {
   return (
     <Stack
@@ -58,13 +50,27 @@ export default function AppLayout() {
           headerShadowVisible: false,
         }}
       />
-      <Stack.Screen name="/Question/AddQuestion" 
+      <Stack.Screen name="Questions/AddQuestion" 
         options={{
-          title: "Adicionar Questão", 
+          title: "Criar Questão", 
           headerTitleAlign: "center",
           ...homeHeaderIcon,
         }}
       />
+      {/* <Stack.Screen name="Questions/QuestionsTab" 
+        options={{
+          title: "Lista de Questões", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+        }}
+      />
+      <Stack.Screen name="Questions/FoldersTab" 
+        options={{
+          title: "Categorias", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+        }}
+      /> */}
     </Stack>
   );
 };

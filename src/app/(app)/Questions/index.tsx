@@ -5,38 +5,20 @@ import { RelativePathString, router, usePathname } from "expo-router";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import MaterialIcons, { MaterialIconsIconName } from "@react-native-vector-icons/material-icons";
 import { useState } from "react";
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar, TabBarIndicator } from 'react-native-tab-view';
+import QuestionsTab from "./QuestionsTab";
+import FoldersTab from "./FoldersTab";
 
-// const renderScene = SceneMap({
-//   all: FirstRoute,
-//   categories: SecondRoute,
-// });
-
-const renderScene = ({ route } : { route: { key: string, title: string} }) => {
+const renderScene = ({ route } : { route: any }) => {
   switch (route.key) {
     case 'all':
-      return (
-        <View>
-          <Text>aaaaaaaaaaaaaaa</Text>
-        </View>
-      )
-      // return <FirstRoute foo={props.foo} />;
+      return <QuestionsTab />;
     case 'categories':
-      return (
-        <View>
-          <Text>bbbbbbbbbbbbbbb</Text>
-        </View>
-      )
-      // return <SecondRoute />;
+      return <FoldersTab />;
     default:
       return null;
   }
 };
-
-const routes = [
-  { key: 'all', title: 'Todas' },
-  { key: 'categories', title: 'Categorias' },
-];
 
 const StyledPressable = (
   {title, icon, link} : {title: string, icon: MaterialIconsIconName, link?: RelativePathString }
@@ -51,49 +33,59 @@ const StyledPressable = (
 );
 
 export default function Questions () {
-  const layout = useWindowDimensions();
-  const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<"all" | "categories">("all");
   const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'all', title: 'Todas' },
+    { key: 'categories', title: 'Categorias' },
+  ]);
   
   return (
-    <KeyboardAwareScrollView contentContainerClassName="gap-3">
+    <KeyboardAwareScrollView contentContainerClassName="flex-1 gap-3">
       <TabView
         navigationState={{ index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        renderTabBar={props => 
-          <TabBar {...props} style={{
-            backgroundColor: "#219EBC",
-            
-          }} />
+        renderTabBar={props =>
+          <TabBar {...props} 
+            style={{
+              backgroundColor: "#219EBC",             
+            }} 
+            indicatorStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+          />
         }
       />
-      {/* <SafeAreaView> */}
 
-        <View className="flex-row justify-around">
-          <StyledPressable title="Arquivar" icon="person-remove" />
-          <StyledPressable title="Adicionar" icon="person-add" link="/Question/AddQuestion"/>
-        </View>
+      {/* {index === 0 ? (
+        <QuestionsList />
+      )
+      : index === 1 ?(
+        <FoldersList />
+      ) : null} */}
 
-        <View className="p-2 gap-3">
-          <View className="flex-row items-center bg-neutral-200 rounded-full">
-            <MaterialIcons name="search" color={"#b0afaf"} size={20} 
-              style={{padding: 8, paddingRight: 0}}
-            />
-            <TextInput
-              placeholder="Pesquisar paciente pelo nome..."
-              value={search}
-              onChangeText={(val) => setSearch(val)}
-              className="flex-1"
-            />
-          </View>
+      {/* <View className="flex-row justify-around">
+        <StyledPressable title="Arquivar" icon="person-remove" />
+        <StyledPressable title="Adicionar" icon="person-add" link="/Questions/AddQuestion"/>
+      </View>
+
+      <View className="p-2 gap-3">
+        <View className="flex-row items-center bg-neutral-200 rounded-full">
+          <MaterialIcons name="search" color={"#b0afaf"} size={20} 
+            style={{padding: 8, paddingRight: 0}}
+          />
+          <TextInput
+            placeholder={`Pesquisar ${index === 0 ? "paciente" : "categoria" } pelo nome...`}
+            value={search}
+            onChangeText={(val) => setSearch(val)}
+            className="flex-1"
+          />
         </View>
+      </View> */}
 
           
 
 
-      {/* </SafeAreaView> */}
     </KeyboardAwareScrollView>
   )
 }
