@@ -10,8 +10,15 @@ const homeHeaderIcon = {
   ),
 }
 
+const notificationHeaderIcon = {
+  headerRight: () => (
+    <Pressable onPress={() => {}}>
+      <MaterialIcons name='notifications-active' color={"#FFFFFF"} size={25}/>
+    </Pressable>
+  ),
+}
+
 export default function AppLayout() {
-  // This renders the navigation stack for all authenticated app routes.
   return (
     <Stack
       screenOptions={{ 
@@ -34,6 +41,28 @@ export default function AppLayout() {
           title: "Adicionar Pacientes", 
           headerTitleAlign: "center",
           ...homeHeaderIcon
+        }}
+      />
+      <Stack.Screen name="Patients/PatientProfile" 
+        options={{
+          title: "Perfil do Paciente", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon
+        }}
+      />
+      <Stack.Screen name="Questions/index" 
+        options={{
+          title: "Questões", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen name="/Question/AddQuestion" 
+        options={{
+          title: "Adicionar Questão", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
         }}
       />
     </Stack>
