@@ -4,29 +4,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons, { MaterialIconsIconName } from "@react-native-vector-icons/material-icons";
 import { Link, RelativePathString, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { HorizontalDivider, VerticalDivider } from "@expo/ui/jetpack-compose";
+import { CircularProgressIndicator, HorizontalDivider, Host, VerticalDivider } from "@expo/ui/jetpack-compose";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axiosInstance from "@/services/apiConfig";
 import { useSession } from "@/context/ctx";
 
-const CARE_LINK_OPTIONS = [
-  {
-    label: "Pendentes",
-    value: "pending",
-  },
-  {
-    label: "Ativos",
-    value: "active",
-  },
-  {
-    label: "Arquivados",
-    value: "archived",
-  },
-  {
-    label: "Rejeitados",
-    value: "rejected",
-  },
-];
+
+type Patients = {
+  _id: string;
+  patient: string;
+  patientDisplayName: string;
+  status: string;
+}
 
 const StyledPressable = (
   {title, icon, link} : {title: string, icon: MaterialIconsIconName, link?: RelativePathString }
@@ -43,33 +32,35 @@ const StyledPressable = (
 export default function Patients () {
   const { user } = useSession();
   const [search, setSearch] = useState("");
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patients[]>([]);
 
-  const [linkStatus, setLinkStatus] = useState<string[]>(["active", "pending"]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [filtersOpen, setFiltersOpen] = useState(false);
-
-  const hasFilters = search?.length || linkStatus?.length;
 
   useEffect(() => {
     const getPatients = async () => {
-      
-      const user_id = JSON.parse(user)._id;
+      try {
+        setIsLoading(true);
+        //@ts-ignore
+        const user_id = JSON.parse(user)._id;
 
-      console.log(user_id)
+        const { data } = await axiosInstance.post("/api/get-patients", {
+          user_id,
+          search,
+        });
 
-      const { data } = await axiosInstance.post("/api/get-patients", {
-        user_id,
-        search,
-        status: linkStatus,
-      });
-
-      console.log("data", data);
-      setPatients(data?.patients);
+        console.log(data)
+        
+        setPatients(data?.patients);
+      } catch(e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     getPatients();
-  }, []);
+  }, [search]);
 
   return (
     <SafeAreaView>
@@ -91,35 +82,31 @@ export default function Patients () {
               className="flex-1"
             />
           </View>
-
-          <View className="bg-red-400">
-            <Pressable className="flex flex-row items-center justify-end p-1 bg-neutral-200">
-              <MaterialIcons name={filtersOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
-                // color={"#b0afaf"} 
-                size={20} 
-                // style={{padding: 8, paddingRight: 0}}
-              />
-              <Text>Filtrossss</Text>
-            </Pressable>
-          </View>
         </View>
 
-
-        {patients && patients?.length ? (
-          <PatientsList patients={patients} />
+        {isLoading ? (
+          <Host>
+            <CircularProgressIndicator />
+          </Host>
         ) : (
-          <View className="flex flex-col items-center justify-center gap-3">
-            <MaterialIcons 
-              name="search-off"
-              color={"#b0afaf"} size={60}
-            />
-            <Text className="text-lg text-neutral-400">Nenhum paciente encontrado.</Text>
-            <Link href="/Patients/AddPatient">
-              <Text className="text-lg text-neutral-500 font-medium underline">
-                Comece adicionando um.
-              </Text>
-            </Link>
-          </View>
+          <>
+            {patients && patients?.length ? (
+              <PatientsList patients={patients} />
+            ) : (
+              <View className="flex flex-col items-center justify-center gap-3">
+                <MaterialIcons 
+                  name="search-off"
+                  color={"#b0afaf"} size={60}
+                />
+                <Text className="text-lg text-neutral-400">Nenhum paciente encontrado.</Text>
+                <Link href="/Patients/AddPatient">
+                  <Text className="text-lg text-neutral-500 font-medium underline">
+                    Comece adicionando um.
+                  </Text>
+                </Link>
+              </View>
+            )}
+          </>
         )}
       </KeyboardAwareScrollView>
     </SafeAreaView>

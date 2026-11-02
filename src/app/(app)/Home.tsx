@@ -15,7 +15,7 @@ const options = [
     id: "2",
     title: "Questões",
     icon: "add-task",
-    link: "/",
+    link: "/Questions",
   },
   {
     id: "3",

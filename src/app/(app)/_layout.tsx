@@ -43,6 +43,28 @@ export default function AppLayout() {
           ...homeHeaderIcon
         }}
       />
+      <Stack.Screen name="Patients/PatientProfile" 
+        options={{
+          title: "Perfil do Paciente", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon
+        }}
+      />
+      <Stack.Screen name="Questions/index" 
+        options={{
+          title: "Questões", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen name="/Question/AddQuestion" 
+        options={{
+          title: "Adicionar Questão", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+        }}
+      />
     </Stack>
   );
 };

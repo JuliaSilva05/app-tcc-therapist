@@ -53,6 +53,7 @@ export default function AddPatient() {
 
       const { data } = await axiosInstance.post("/api/invite-patient", {
         patient: searchResponse?.patient,
+        //@ts-ignore
         therapist: JSON.parse(user),
       });
 
