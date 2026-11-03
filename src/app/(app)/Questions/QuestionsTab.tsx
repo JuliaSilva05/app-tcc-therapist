@@ -2,9 +2,15 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, Text, TextInput, View } from "react-native";
 import MaterialIcons, { MaterialIconsIconName } from "@react-native-vector-icons/material-icons";
-import { RelativePathString, router } from "expo-router";
+import { Link, RelativePathString, router } from "expo-router";
 import { useState } from "react";
+import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
+import QuestionsList from "./QuestionsList";
 
+type Questions = {
+  _id: string;
+  title: string;
+}
 
 const StyledPressable = (
   {title, icon, link} : {title: string, icon: MaterialIconsIconName, link?: RelativePathString }
@@ -20,12 +26,15 @@ const StyledPressable = (
 
 export default function QuestionsTab () {
   const [search, setSearch] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [questions, setQuestions] = useState<Questions[]>();
+  
   return (
     <SafeAreaView>
       <KeyboardAwareScrollView className="gap-3">
         <View className="flex-row justify-around">
           <StyledPressable title="Deletar" icon="remove" />
+          {/* @ts-ignore */}
           <StyledPressable title="Adicionar" icon="add" link="/Questions/AddQuestion"/>
         </View>
 
@@ -42,6 +51,27 @@ export default function QuestionsTab () {
             />
           </View>
         </View>
+
+        {isLoading ? (
+          <Host>
+            <CircularProgressIndicator />
+          </Host>
+        ) : questions && questions.length ? (
+          <QuestionsList questions={questions} />
+        ) : (
+          <View className="flex flex-col items-center justify-center gap-3">
+            <MaterialIcons 
+              name="search-off"
+              color={"#b0afaf"} size={60}
+            />
+            <Text className="text-lg text-neutral-400">Nenhuma questão encontrada.</Text>
+            <Link href="/Questions/AddQuestion">
+              <Text className="text-lg text-neutral-500 font-medium underline">
+                Comece adicionando uma.
+              </Text>
+            </Link>
+          </View>
+        )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

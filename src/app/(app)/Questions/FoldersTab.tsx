@@ -119,7 +119,7 @@ export default function FoldersTabs () {
               name="search-off"
               color={"#b0afaf"} size={60}
             />
-            <Text className="text-lg text-neutral-400">Nenhum paciente encontrado.</Text>
+            <Text className="text-lg text-neutral-400">Nenhuma categoria encontrada.</Text>
             <Pressable onPress={() => setIsOpen(true)}>
               <Text className="text-lg text-neutral-500 font-medium underline">
                 Comece adicionando uma.

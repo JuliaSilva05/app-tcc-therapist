@@ -4,8 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 type Questions = {
   _id: string;
-  name: string;
-  itemsCount: string
+  title: string;
 }
 export default function QuestionsList({questions}:{questions: Questions[]}) {
   return (
@@ -30,7 +29,7 @@ export default function QuestionsList({questions}:{questions: Questions[]}) {
                   <MaterialIcons name="folder" size={25} />
                 </View>
                 
-                <Text>{item.name}</Text>
+                <Text>{item.title}</Text>
               </View>
             
               <MaterialIcons name="chevron-right" size={30} /> 
