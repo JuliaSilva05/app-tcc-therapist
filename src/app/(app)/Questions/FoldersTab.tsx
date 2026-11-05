@@ -38,8 +38,6 @@ export default function FoldersTabs () {
           kind: "question",
           itemModel: "Question",
         });
-
-        console.log(data)
         
         setCategories(data?.folders);
       } catch(e) {
