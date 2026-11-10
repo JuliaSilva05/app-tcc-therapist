@@ -21,7 +21,7 @@ const options = [
     id: "3",
     title: "Atividades",
     icon: "format-list-numbered",
-    link: "/",
+    link: "/Activities",
   },
   {
     id: "4",

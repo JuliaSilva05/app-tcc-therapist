@@ -57,6 +57,22 @@ export default function AppLayout() {
           ...homeHeaderIcon,
         }}
       />
+      <Stack.Screen name="Activities/index" 
+        options={{
+          title: "Atividades", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen name="Activities/AddActivity" 
+        options={{
+          title: "Criar Atividade", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+          headerShadowVisible: false,
+        }}
+      />
       {/* <Stack.Screen name="Questions/QuestionsTab" 
         options={{
           title: "Lista de Questões", 

@@ -56,36 +56,6 @@ export default function Questions () {
           />
         }
       />
-
-      {/* {index === 0 ? (
-        <QuestionsList />
-      )
-      : index === 1 ?(
-        <FoldersList />
-      ) : null} */}
-
-      {/* <View className="flex-row justify-around">
-        <StyledPressable title="Arquivar" icon="person-remove" />
-        <StyledPressable title="Adicionar" icon="person-add" link="/Questions/AddQuestion"/>
-      </View>
-
-      <View className="p-2 gap-3">
-        <View className="flex-row items-center bg-neutral-200 rounded-full">
-          <MaterialIcons name="search" color={"#b0afaf"} size={20} 
-            style={{padding: 8, paddingRight: 0}}
-          />
-          <TextInput
-            placeholder={`Pesquisar ${index === 0 ? "paciente" : "categoria" } pelo nome...`}
-            value={search}
-            onChangeText={(val) => setSearch(val)}
-            className="flex-1"
-          />
-        </View>
-      </View> */}
-
-          
-
-
     </KeyboardAwareScrollView>
   )
 }

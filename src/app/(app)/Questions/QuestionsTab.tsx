@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
 import QuestionsList from "./QuestionsList";
 import axiosInstance from "@/services/apiConfig";
+import { useSession } from "@/context/ctx";
 
 type Questions = {
   _id: string;
@@ -26,9 +27,10 @@ const StyledPressable = (
 );
 
 export default function QuestionsTab () {
+  const { user } = useSession();
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [questions, setQuestions] = useState<Questions[]>();
+  const [questions, setQuestions] = useState<any[]>();
 
   useEffect(() => {
     const getQuestions = async () => {
@@ -37,11 +39,9 @@ export default function QuestionsTab () {
         //@ts-ignore
         const user_id = JSON.parse(user)._id;
 
-        const { data } = await axiosInstance.post("/api/get-questions", {
-          therapist: user_id,
-        });
+        const { data } = await axiosInstance.get(`/api/get-questions/${user_id}`);
         
-        setQuestions(data?.folders);
+        setQuestions(data?.questions);
       } catch(e) {
         console.error(e);
       } finally {
@@ -50,7 +50,7 @@ export default function QuestionsTab () {
     }
 
     getQuestions();
-  }, [search]);
+  }, []);
   
   return (
     <SafeAreaView>
