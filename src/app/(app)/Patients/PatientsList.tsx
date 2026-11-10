@@ -3,34 +3,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { View, Text, FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const mock = [
-  {
-    _id: "1",
-    patientDisplayName: "asdfasfsa",
-    status:"active",
-  },
-  {
-    _id: "2",
-    patientDisplayName: "lolopkllihl",
-    status:"archived",
-  },
-  {
-    _id: "3",
-    patientDisplayName: "wwwwwwww",
-    status:"pending",
-  },
-  {
-    _id: "4",
-    patientDisplayName: "ccccccc",
-    status:"rejected",
-  },
-  {
-    _id: "5",
-    patientDisplayName: "bbbbbbbbbbbbb",
-    status:"active",
-  },
-]
-
 type Patients = {
   _id: string;
   patient: string;
@@ -65,7 +37,6 @@ const STATUSES: Statuses = {
 };
 
 export default function PatientsList({patients}:{patients: Patients[]}) {
-  
   return (
     <SafeAreaView>
       {patients.map(item => {
