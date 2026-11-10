@@ -3,9 +3,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, Text, TextInput, View } from "react-native";
 import MaterialIcons, { MaterialIconsIconName } from "@react-native-vector-icons/material-icons";
 import { Link, RelativePathString, router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
 import QuestionsList from "./QuestionsList";
+import axiosInstance from "@/services/apiConfig";
 
 type Questions = {
   _id: string;
@@ -28,6 +29,28 @@ export default function QuestionsTab () {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Questions[]>();
+
+  useEffect(() => {
+    const getQuestions = async () => {
+      try {
+        setIsLoading(true);
+        //@ts-ignore
+        const user_id = JSON.parse(user)._id;
+
+        const { data } = await axiosInstance.post("/api/get-questions", {
+          therapist: user_id,
+        });
+        
+        setQuestions(data?.folders);
+      } catch(e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getQuestions();
+  }, [search]);
   
   return (
     <SafeAreaView>

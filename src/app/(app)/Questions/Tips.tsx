@@ -3,9 +3,17 @@ import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioPlayer, useAu
 import { useEffect } from "react";
 import { Pressable, TextInput, View, Text, Alert } from "react-native";
 
+type Audio = {
+  url: string | null;
+  mimeType: string | null | undefined;
+  durationSec: number;
+  sizeBytes: number;
+}
+
 type Tip = {
+  id: number;
   text: string;
-  audio?: string | null;
+  audio?: Audio | null;
 }
 
 type Props = {
@@ -49,7 +57,7 @@ export default function Tips({index, currentTip, tips, setTips, isRecOrPlaying, 
       })();
     }, []);
 
-  const tipAudioPlayer = useAudioPlayer(currentTip.audio, {
+  const tipAudioPlayer = useAudioPlayer(currentTip.audio?.url, {
     updateInterval: 1000,
     downloadFirst: true,
   });
@@ -67,6 +75,8 @@ export default function Tips({index, currentTip, tips, setTips, isRecOrPlaying, 
 
     test(audioRecorder);
   }, [audioRecorder.isRecording, tipAudioPlayerStatus.playing]);
+
+  console.log('tips', tips)
 
   return (
     <View key={`question-tips-${index}`} className="flex-col gap-3">
@@ -116,17 +126,21 @@ export default function Tips({index, currentTip, tips, setTips, isRecOrPlaying, 
             className="w-8 h-8 border bg-neutral-200 rounded-full items-center justify-center"
             onPress={() => {
               if (recorderState.isRecording) {
-                stopRecording();
-                // setTitleAudio(recorderState.url);
                 setTips((current: any[]) => 
                   current?.map(
                     (tip, tipIndex) => 
                       tipIndex === index ? {
                         ...tip,
-                        audio: recorderState.url,
+                        audio: {
+                          url: recorderState.url,
+                          mimeType: recorderState.url  ? `audio/${recorderState.url?.split(".").pop()}` : null,
+                          durationSec: Number((recorderState.durationMillis/1000).toFixed(0)),
+                          sizeBytes: recorderState.fileSize,
+                        },
                       } : tip
                   )
                 )
+                stopRecording();
               } else {
                 record();
               }
