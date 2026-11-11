@@ -21,6 +21,9 @@ import { Blob } from 'expo-blob';
 import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
 import { router } from "expo-router";
 
+import { File } from "expo-file-system";
+import { fetch } from "expo/fetch";
+
 type Questions = {
   title: string;
   descriptionAudio?: any;
@@ -143,12 +146,13 @@ export default function AddQuestion() {
           Alert.alert("data ok");
 
           const { imageUpload, descriptionAudioUpload, tipsUploads } = data.uploads;
-
-          const imageBlob = new Blob([image], { type: `image/${image.split(".").pop()}` });
+          
+          const imageFile = new File(image);
+          // const imageBlob = new Blob([image], { type: `image/${image.split(".").pop()}` });
           const imagePut = await fetch(imageUpload.putUrl, {
             method: 'PUT',
             headers: { 'Content-Type': imageUpload.contentType }, // must match what the server signed
-            body: imageBlob,
+            body: imageFile,
           });
           if (!imagePut.ok) throw new Error(`Upload failed ${imagePut.status}`);
 
@@ -178,7 +182,7 @@ export default function AddQuestion() {
             }
           }
 
-          router.navigate("/Questions");
+          router.dismissTo("/(app)/Questions");
         }        
       } else {
         Alert.alert("É necessário no mínimo título, pergunta e imagem!");

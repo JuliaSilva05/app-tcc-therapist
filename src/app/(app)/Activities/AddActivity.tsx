@@ -12,6 +12,7 @@ import { Checkbox } from 'expo-checkbox';
 
 type Patients = {
   _id: string;
+  patient: string;
   patientDisplayName: string;
 }
 type Questions = {
@@ -51,19 +52,19 @@ export default function AddActivity () {
 
   useEffect(() => {
     const getQuestionsOptions = async () => {
-        try {
-          setIsLoading(true);
-          //@ts-ignore
-          // const user_id = JSON.parse(user)._id;
+      try {
+        setIsLoading(true);
+        //@ts-ignore
+        // const user_id = JSON.parse(user)._id;
 
-          const { data } = await axiosInstance.get(`/api/get-questions/${user_id}`);
-          
-          setQuestionsOptions(data?.questions);
-        } catch(e) {
-            console.error(e);
-        } finally {
-            setIsLoading(false);
-        }
+        const { data } = await axiosInstance.get(`/api/get-questions/${user_id}`);
+        
+        setQuestionsOptions(data?.questions);
+      } catch(e) {
+          console.error(e);
+      } finally {
+          setIsLoading(false);
+      }
     }
 
     getQuestionsOptions();
@@ -79,7 +80,7 @@ export default function AddActivity () {
         });
 
         console.log(data)
-        
+
         setPatientsOptions(data?.patients);
       } catch(e) {
         console.error(e);
@@ -90,9 +91,6 @@ export default function AddActivity () {
 
     getPatientsOptions();
   }, [search]);
-
-  console.log(questionsOptions, patientsOptions)
-  console.log(questions, patients)
 
   const handleSubmit = async () => {
     try {
@@ -107,7 +105,7 @@ export default function AddActivity () {
 
       console.log(data)
 
-      router.navigate("/(app)/Activities")
+      router.dismissTo("/(app)/Activities")
     } catch (e) {
       console.error(e);
     } finally {
@@ -148,7 +146,7 @@ export default function AddActivity () {
             </View>
 
             <View className=" items-center">
-              <Text className="text-lg font-semibold">Escolher Questões</Text>
+              <Text className="text-lg font-semibold">Escolher Questões<Text className="text-red-500"> *</Text></Text>
             </View>
             <View >
               {questionsOptions?.map(item => {
@@ -183,20 +181,20 @@ export default function AddActivity () {
             </View>
             <View >
               {patientsOptions?.map(item => {
-                const checked = patients?.includes(item._id);
+                const checked = patients?.includes(item.patient);
                 return (
                   <View 
-                    key={item._id}
+                    key={item.patient}
                     className="flex flex-row gap-3 py-3 items-center border-t border-t-neutral-400"
                   >
                     <Checkbox 
                       value={checked}
                       onValueChange={(e) => {
                         if (checked) {
-                          const filtered = patients?.filter(v => v !== item._id);
+                          const filtered = patients?.filter(v => v !== item.patient);
                           setPatients(filtered);
                         } else {
-                          setPatients([...patients || [], item._id]);
+                          setPatients([...patients || [], item.patient]);
                         }
                       }}
                     />
