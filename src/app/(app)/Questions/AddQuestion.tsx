@@ -17,7 +17,6 @@ import {
 import Tips from "./Tips";
 import axiosInstance from "@/services/apiConfig";
 import { useSession } from "@/context/ctx";
-import { Blob } from 'expo-blob';
 import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
 import { router } from "expo-router";
 
@@ -65,8 +64,34 @@ export default function AddQuestion() {
   };
 
   const stopRecording = async () => {
-    // The recording will be available on `audioRecorder.uri`.
+    // Capture duration before stopping
+    const durationSec = Math.round(
+      recorderState.durationMillis / 1000
+    );
+
+    // Finish recording before accessing the file
     await audioRecorder.stop();
+
+    const uri = audioRecorder.uri;
+
+    if (!uri) {
+      throw new Error("Audio recording URI not found");
+    }
+
+    const audioFile = new File(uri);
+
+    setDescriptionAudio({
+      url: uri,
+      mimeType: "audio/mp4",
+      durationSec,
+      sizeBytes: audioFile.size,
+    });
+
+    console.log("Recorded audio:", {
+      uri,
+      size: audioFile.size,
+      mimeType: "audio/mp4",
+    });
   };
 
   useEffect(() => {
@@ -232,9 +257,11 @@ export default function AddQuestion() {
         </View>
 
       {isLoading ? (
-        <Host>
-          <CircularProgressIndicator />
-        </Host>
+        <View className="items-center">
+          <Host matchContents>
+            <CircularProgressIndicator />
+          </Host>
+        </View>
       ) : (
         <>
           <View className="gap-1">

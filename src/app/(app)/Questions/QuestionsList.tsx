@@ -1,8 +1,12 @@
 import MaterialIcons from "@react-native-vector-icons/material-icons";
-import { Pressable, View, Text, Image } from "react-native";
+import { Pressable, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Accordion from 'react-native-collapsible/Accordion';
 import { useEffect, useState } from "react";
+import { Image } from "expo-image";
+import { Avatar } from "react-native-elements";
+import { router } from "expo-router";
+import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
 
 type Questions = {
   _id: string;
@@ -10,42 +14,37 @@ type Questions = {
   description: string;
   imageKey?: string;
   image: any;
-  tips: any;
+  tips: any[];
 }
 
 
 export default function QuestionsList({questions}:{questions: Questions[]}) {
-  const [activeSections, setActiveSections] = useState([]);
+  const [activeSections, setActiveSections] = useState<number[]>([]);
+  const [isLoadingImg, setIsLoadingImg] = useState(true);
 
   console.log('activeSections',activeSections)
-
-  // useEffect(() => {
-  //   const getImage = async () => {
-  //     // const imagePut = await fetch(currentImage.url, {
-  //     //   method: 'PUT',
-  //     //   headers: { 'Content-Type': currentImage.contentType }, // must match what the server signed
-  //     //   // body: imageBlob,
-  //     // });
-
-  //     // console.log(imagePut)
-  //   }
-
-  //   getImage();
-  // }, [activeSections]);
-
-  const onChange = () => {
-
-  }
 
   return (
     <SafeAreaView>
       <Accordion
         activeSections={activeSections}
         sections={questions}
+        keyExtractor={(section) => section._id}
         renderHeader={(section) =>
           <View className="flex flex-row mx-2 py-3 gap-3 items-center border-t border-t-neutral-400">
             <View className="w-10 h-10 p-1 items-center justify-center rounded-full border">
-              <MaterialIcons name="task" size={25} />
+              {section?.image ? (
+                <Avatar
+                  rounded
+                  source={{
+                    uri:
+                      section?.image.url,
+                  }}
+                  
+                />
+              ) : (
+                <MaterialIcons name="task" size={25} />
+              )}
             </View>
             <Text>{section.title}</Text>
           </View>
@@ -55,18 +54,39 @@ export default function QuestionsList({questions}:{questions: Questions[]}) {
             <View className="flex flex-row gap-2">
               <Pressable 
                 className="flex flex-row gap-1 items-center justify-center p-1 px-2 bg-neutral-200 border rounded-full"
+                onPress={() => router.navigate({
+                  pathname: "/(app)/Questions/QuestionPreview", 
+                  params: {questionId: section._id},
+                })}
               >
                 <MaterialIcons name="play-circle-outline" size={20} />
                 <Text>Prévia</Text>
               </Pressable>
             </View>
-            <View className="flex flex-row justify-between">
-              <View className="flex flex-col w-1/2">
-                <Text>{section.description}</Text>
-                <Image 
-                  // source={{uri: section.image}}
-                  style={{width: 40, height: 30}}
-                />
+            <View className="flex flex-row justify-between gap-3">
+              <View className="flex flex-col w-1/2 gap-2">
+                <Text><Text className="font-medium">Pergunta: </Text>{section.description}</Text>
+                {section?.image && (
+                  <>
+                    <Image
+                      source={{ uri: section?.image.url }}
+                      style={{ width: "auto", aspectRatio: 4 / 3 }}
+                      contentFit="contain"
+                      cachePolicy="none"
+                      onLoad={() => console.log("Image loaded!")}
+                      onError={(e) => console.log("Image error:", e.error)}
+                      onLoadStart={() => setIsLoadingImg(true)}
+                      onLoadEnd={() => setIsLoadingImg(false)}
+                    />
+                    {isLoadingImg && ( 
+                      <View className="items-center justify-center w-auto aspect-4/3">
+                        <Host matchContents>
+                          <CircularProgressIndicator />
+                        </Host>
+                      </View>
+                    )}
+                  </>
+                )}
               </View>
               {section.tips && section.tips.length && (
                 <View className="flex flex-col w-1/2">

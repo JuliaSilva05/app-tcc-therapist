@@ -106,9 +106,11 @@ export default function FoldersTabs () {
         </View>
 
         {isLoading ? (
-          <Host>
-            <CircularProgressIndicator />
-          </Host>
+          <View className="items-center">
+            <Host matchContents>
+              <CircularProgressIndicator />
+            </Host>
+          </View>
         ) : categories && categories.length ? (
           <FoldersList categories={categories} />
         ) : (

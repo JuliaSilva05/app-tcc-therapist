@@ -57,6 +57,13 @@ export default function AppLayout() {
           ...homeHeaderIcon,
         }}
       />
+      <Stack.Screen name="Questions/QuestionPreview" 
+        options={{
+          title: "Prévia da Questão", 
+          headerTitleAlign: "center",
+          ...homeHeaderIcon,
+        }}
+      />
       <Stack.Screen name="Activities/index" 
         options={{
           title: "Atividades", 

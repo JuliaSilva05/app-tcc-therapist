@@ -85,9 +85,11 @@ export default function Patients () {
         </View>
 
         {isLoading ? (
-          <Host>
-            <CircularProgressIndicator />
-          </Host>
+          <View className="items-center">
+            <Host matchContents>
+              <CircularProgressIndicator />
+            </Host>
+          </View>
         ) : (
           <>
             {patients && patients?.length ? (

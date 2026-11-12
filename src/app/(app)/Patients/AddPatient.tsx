@@ -98,9 +98,11 @@ export default function AddPatient() {
         </View>
 
         {isLoading || isSendingInvite ? (
-          <Host matchContents >
-            <CircularProgressIndicator />
-          </Host>
+          <View className="items-center">
+            <Host matchContents>
+              <CircularProgressIndicator />
+            </Host>
+          </View>
         ) : (
           searchResponse ? (
             <View className="flex py-4 mx-4">        

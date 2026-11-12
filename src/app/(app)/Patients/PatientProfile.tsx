@@ -5,7 +5,7 @@ import { useLocalSearchParams, usePathname } from "expo-router";
 import MaterialIcons from "@react-native-vector-icons/material-icons";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/services/apiConfig";
-import { CircularProgressIndicator, Host } from "@expo/ui/jetpack-compose";
+import { CircularProgressIndicator, Host, SelectableDropdownMenuItem } from "@expo/ui/jetpack-compose";
 
 type PatientInfo = {
   name: string;
@@ -13,10 +13,17 @@ type PatientInfo = {
   patientDisplayName: string;
 }
 
+type PatientHistory = {
+  title: string;
+  status: string;
+  recordings: any[];
+}
+
 export default function PatientProfile () {
   const { linkId, patientId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [patientInfo, setPatientInfo] = useState<PatientInfo>();
+  const [patientHistory, setPatientHistory] = useState<patientHistory[]>();
 
   const [editing, setEditing] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState('');
@@ -27,6 +34,7 @@ export default function PatientProfile () {
         const { data } = await axiosInstance.get(`/api/get-patient-info/${linkId}`);
         console.log(data)
         setPatientInfo(data?.info);
+        setPatientHistory(data?.history);
       } catch (e) {
         console.error(e);
       }
@@ -77,34 +85,62 @@ export default function PatientProfile () {
 
       </View>
       {isLoading ? (
-        <Host>
-          <CircularProgressIndicator/>
-        </Host>
+        <View className="items-center">
+          <Host matchContents>
+            <CircularProgressIndicator />
+          </Host>
+        </View>
       ) : (
-        <View className="flex-col gap-1">
-            <Text className="font-md">Salvar na lista como:</Text>
-            {editing ? (
-              <View className="gap-3">
-                <TextInput placeholder="Nome para salvar" value={newDisplayName} onChangeText={(e) => setNewDisplayName(e)} className="bg-neutral-200 p-3" />
-                <View className="flex-row justify-around">
-                  <Pressable onPress={() => { setEditing(false)}} className="w-1/3 p-1 items-center bg-neutral-200 border rounded-md">
-                    <Text>Cancelar</Text>
-                  </Pressable>
-                  <Pressable onPress={handleChangeDisplayName} className="w-1/3 p-1 items-center bg-neutral-200 border rounded-md">
-                    <Text>Salvar</Text>
+          <View className="flex-col gap-1">
+              <Text className="font-md">Salvar na lista como:</Text>
+              {editing ? (
+                <View className="gap-3">
+                  <TextInput placeholder="Nome para salvar" value={newDisplayName} onChangeText={(e) => setNewDisplayName(e)} className="bg-neutral-200 p-3" />
+                  <View className="flex-row justify-around">
+                    <Pressable onPress={() => { setEditing(false)}} className="w-1/3 p-1 items-center bg-neutral-200 border rounded-md">
+                      <Text>Cancelar</Text>
+                    </Pressable>
+                    <Pressable onPress={handleChangeDisplayName} className="w-1/3 p-1 items-center bg-neutral-200 border rounded-md">
+                      <Text>Salvar</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+                <View className="flex-row justify-between bg-neutral-200 p-3">
+                  <Text>{patientInfo?.patientDisplayName}</Text>
+                  <Pressable onPress={() => { setEditing(true), setNewDisplayName(patientInfo?.patientDisplayName || "")}}>
+                    <MaterialIcons name="edit" size={20}/>
                   </Pressable>
                 </View>
-              </View>
-            ) : (
-              <View className="flex-row justify-between bg-neutral-200 p-3">
-                <Text>{patientInfo?.patientDisplayName}</Text>
-                <Pressable onPress={() => { setEditing(true), setNewDisplayName(patientInfo?.patientDisplayName || "")}}>
-                  <MaterialIcons name="edit" size={20}/>
-                </Pressable>
-              </View>
-            )}
-        </View>
+              )}
+          </View>
+
       )}
+      <View className="">
+        <Text className="text-lg font-medium border-b ">Histórico de Atividades</Text>
+        {patientHistory?.map(v => {
+          return (
+            <View className="flex flex-col p-4 border-l border-b rounded-lg">
+              <View className="flex flex-row gap-3">
+                <View className="flex flex-col w-1/2">
+                  <Text className="text-neutral-500">Atividade</Text>
+                  <Text>{v.title}</Text>
+                </View>
+
+                <View className="flex flex-col w-1/2">
+                  <Text className="text-neutral-500">Status</Text>
+                  {/* <SelectableDropdownMenuItem
+                    selected={v.status}
+                  /> */}
+                  <Text>{v.status}</Text>
+                </View>
+
+              </View>
+
+            </View>
+          )
+        })}
+      </View>
     </SafeAreaView>
   )
 }

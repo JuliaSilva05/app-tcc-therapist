@@ -6,7 +6,7 @@ import Accordion from "react-native-collapsible/Accordion";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PatientsList({activities}:{activities: any[]}) {
-  const [activeSections, setActiveSections] = useState([]);
+  const [activeSections, setActiveSections] = useState<number[]>([]);
   
   return (
     <SafeAreaView>
@@ -22,22 +22,34 @@ export default function PatientsList({activities}:{activities: any[]}) {
           </View>
         }
         renderContent={(section) =>
-          <View className="flex flex-col px-6 py-3 gap-3">
-            <View className="flex flex-row justify-between">
-            {section.questions && section.questions.length && (
-              <View className="flex flex-col w-1/2">
-                <Text className="text-md font-medium">Questões: {section.questions.length}</Text>
-                {/* {section.questions.map((v) => {
-                  return (
-                    <View className="flex-row gap-1 items-center">
-                      <Text className="text-xl">{'\u2022'}</Text>
-                      <Text className="text-sm">{v.text}</Text>
-                    </View>
-                  )
-                })} */}
-                  
-              </View>
-            )}
+          <View className="flex flex-col px-6 py-3">
+            <View className="flex flex-row justify-between gap-3">
+              {section.questions && section.questions.length && (
+                <View className="flex flex-col w-1/2">
+                  <Text className="text-md font-medium">Questões:</Text>
+                  {section.questions.map((v : any) => {
+                    return (
+                      <View className="flex-row gap-1 items-center">
+                        <Text className="text-xl">{'\u2022'}</Text>
+                        <Text className="text-sm">{v.title}</Text>
+                      </View>
+                    )
+                  })}
+                </View>
+              )}
+              {section.patients && section.patients.length && (
+                <View className="flex flex-col w-1/2">
+                  <Text className="text-md font-medium">Atribuído a:</Text>
+                  {section.patients.map((v : any) => {
+                    return (
+                      <View className="flex-row gap-1 items-center">
+                        <Text className="text-xl">{'\u2022'}</Text>
+                        <Text className="text-sm">{v.patientDisplayName}</Text>
+                      </View>
+                    )
+                  })}
+                </View>
+              )}
             </View>
           </View>
         }

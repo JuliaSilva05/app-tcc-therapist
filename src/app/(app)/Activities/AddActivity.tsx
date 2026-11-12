@@ -126,9 +126,11 @@ export default function AddActivity () {
         </View>
 
         {isLoading ? (
-          <Host>
-            <CircularProgressIndicator />
-          </Host>
+          <View className="items-center">
+            <Host matchContents>
+              <CircularProgressIndicator />
+            </Host>
+          </View>
         ) : (
           <View className="flex flex-col gap-3 p-4">
             <View className="gap-1">
@@ -160,12 +162,12 @@ export default function AddActivity () {
                       value={checked}
                       onValueChange={(e) => {
                         if (checked) {
-                          // const filtered = questions?.filter(v => v !== item._id);
-                          // setQuestions(filtered);
-                          setQuestions([]);
+                          const filtered = questions?.filter(v => v !== item._id);
+                          setQuestions(filtered);
+                          // setQuestions([]);
                         } else {
-                          setQuestions([item._id]);
-                          // setQuestions([...questions || [], item._id]);
+                          // setQuestions([item._id]);
+                          setQuestions([...questions || [], item._id]);
                         }
                       }}
                     />

@@ -47,6 +47,8 @@ export default function Activities () {
         const { data } = await axiosInstance.get(`/api/get-activities/${user_id}`);
 
         console.log(data)
+        console.log(data.activities)
+        console.log(data.activities.flatMap((v:any) => v.patients))
         
         setActivities(data?.activities);
       } catch(e) {
@@ -64,6 +66,7 @@ export default function Activities () {
       <KeyboardAwareScrollView contentContainerClassName="gap-3">
         <View className="flex-row justify-around">
           <StyledPressable title="Arquivar" icon="remove" />
+          {/* @ts-ignore */}
           <StyledPressable title="Adicionar" icon="add" link="/Activities/AddActivity"/>
         </View>
 
@@ -82,9 +85,11 @@ export default function Activities () {
         </View>
 
         {isLoading ? (
-          <Host>
-            <CircularProgressIndicator />
-          </Host>
+          <View className="items-center">
+            <Host matchContents>
+              <CircularProgressIndicator />
+            </Host>
+          </View>
         ) : (
           <>
             {activities && activities?.length ? (

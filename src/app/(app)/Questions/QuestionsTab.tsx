@@ -76,9 +76,11 @@ export default function QuestionsTab () {
         </View>
 
         {isLoading ? (
-          <Host>
-            <CircularProgressIndicator />
-          </Host>
+          <View className="items-center">
+            <Host matchContents>
+              <CircularProgressIndicator />
+            </Host>
+          </View>
         ) : questions && questions.length ? (
           <QuestionsList questions={questions} />
         ) : (
